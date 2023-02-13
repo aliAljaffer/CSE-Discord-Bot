@@ -253,7 +253,7 @@ class AdminCommands(commands.Cog):
 
     @app_commands.command(description="set status of discord bot")
     @app_commands.default_permissions(administrator=True)
-    async def status(self, interaction:discord.Interaction, status:str):
+    async def status(self, interaction:discord.Interaction, status:str, emoji:str = 'None'):
         """Set status of discord bot
         Take in a user input for the status of the Discord Bot. If the status is 'none', log that the user
         removed the custom status. Otherwise, ensure proper length of message, and calls change_presence method
@@ -274,7 +274,10 @@ class AdminCommands(commands.Cog):
                 await log(self.bot, f'{interaction.user} disabled the custom status')
                 await f.write('Raider Up!') # Default status for when the bot restarts
             elif len(status) <= 128:
-                await self.bot.change_presence(activity=discord.Game(status))
+                if emoji == 'None':
+                    await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=status))
+                elif emoji != 'None':
+                    await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=status, emoji=emoji))
                 await log(self.bot, f'{interaction.user} changed the custom status to "Playing {status}"')
                 await f.write(status) # write the new status to the file
         await interaction.followup.send("Status set")
