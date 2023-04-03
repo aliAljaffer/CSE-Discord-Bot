@@ -5,7 +5,7 @@ import re
 
 from discord.ext import commands
 from discord import MessageType
-from discord import app_commands
+from discord import app_commands, PartialEmoji
 
 from utils.utils import *
 
@@ -264,17 +264,26 @@ class AdminCommands(commands.Cog):
         """
 
         await interaction.response.defer(ephemeral=True)
+        print(status)
+        if re.search(r"^<:.*\d{18}>", status):
+            print("match found!")
+        else:
+            print("no match")
 
         # open a file to store the status in
         async with aiofiles.open('status.txt', mode='w') as f:
-        
             status = status.strip()
             if status.lower() == 'none':
                 await self.bot.change_presence(activity=None)
                 await log(self.bot, f'{interaction.user} disabled the custom status')
                 await f.write('Raider Up!') # Default status for when the bot restarts
             elif len(status) <= 128:
-                await self.bot.change_presence(activity=discord.Game(status))
+                if re.search(r"^<:.*\d{18}>", status):
+                    emoji = PartialEmoji.from_str(status)
+                    print(type(emoji))
+                    await self.bot.change_presence(activity=discord.Activity(name="", emoji=emoji, type=discord.ActivityType.playing))
+                else:
+                    await self.bot.change_presence(activity=discord.Activity(name=status, type=discord.ActivityType.playing))
                 await log(self.bot, f'{interaction.user} changed the custom status to "Playing {status}"')
                 await f.write(status) # write the new status to the file
         await interaction.followup.send("Status set")
