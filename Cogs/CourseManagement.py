@@ -1,6 +1,7 @@
 import os
 import re
 import pandas as pd
+from typing import List
 
 from discord.ext import commands
 from discord.utils import get
@@ -323,3 +324,17 @@ class CourseManagement(commands.Cog):
         else:
             await log(self.bot, f"{interaction.user} created the '{role_name}' role and '{button_name}' button in #{interaction.channel}")
         await interaction.followup.send("Role button was created")
+
+    @app_commands.command(description="Add a role and have a button for it")
+    @app_commands.default_permissions(administrator=True)
+    async def persistrole(self, interaction:discord.Interaction, role_name:str, button_name:str, emoji:str = 'None'):
+        pass
+
+    @persistrole.autocomplete("option")
+    async def persistrole_auto(self, interaction:discord.Interaction, current:str) -> List[app_commands.Choice[str]]:
+        data = []
+        # For every choice if the typed in value is in the choice add it to the possible options
+        for choice in self.choices:
+            if current.lower() in choice.lower():
+                data.append(app_commands.Choice(name=choice, value=choice))
+        return data
