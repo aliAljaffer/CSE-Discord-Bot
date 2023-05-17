@@ -332,9 +332,10 @@ class CourseManagement(commands.Cog):
 
     @persistrole.autocomplete("option")
     async def persistrole_auto(self, interaction:discord.Interaction, current:str) -> List[app_commands.Choice[str]]:
-        data = []
+        options = ["show", "upload"]
+        choices = []
         # For every choice if the typed in value is in the choice add it to the possible options
-        for choice in self.choices:
-            if current.lower() in choice.lower():
-                data.append(app_commands.Choice(name=choice, value=choice))
-        return data
+        for option in options:
+            if current.lower() in option.lower():
+                choices.append(app_commands.Choice(name=option, value=option))
+        return choices
