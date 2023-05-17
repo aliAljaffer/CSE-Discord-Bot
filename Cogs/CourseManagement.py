@@ -327,12 +327,30 @@ class CourseManagement(commands.Cog):
 
     @app_commands.command(description="Add a role and have a button for it")
     @app_commands.default_permissions(administrator=True)
-    async def persistrole(self, interaction:discord.Interaction, role_name:str, button_name:str, emoji:str = 'None'):
-        pass
+    async def persistrole(self, interaction:discord.Interaction, option:str):
+        await interaction.response.send_message("Please send CSV if you intend to use one. If you do not intend to use one, the cached CSV will be used.")
+        csv_filepath = f'role_lists/other_roles_{interaction.guild.id}.csv'
+
+        csv = await interaction.client.wait_for('message', check=lambda message: message.author == interaction.user)
+        # If csv file attached, overwrite existing csv
+        if len(csv.attachments) > 0:
+            try:
+                os.remove(csv_filepath)
+            except FileNotFoundError:
+                pass
+            await csv.attachments[0].save(csv_filepath)
+        
+        roles_df = pd.read_csv(csv_filepath)
+
+        if option == "show":
+            display_msg = "roles\tbuttons\n"
+            for i in range(len(roles_df)):
+                display_msg += f"{roles_df.loc[i, 'role_name']}\t{roles_df.loc[i, 'button_name']}\n"
+            await interaction.followup.send(display_msg)
 
     @persistrole.autocomplete("option")
     async def persistrole_auto(self, interaction:discord.Interaction, current:str) -> List[app_commands.Choice[str]]:
-        options = ["show", "upload"]
+        options = ["build", "show", "upload"]
         choices = []
         # For every choice if the typed in value is in the choice add it to the possible options
         for option in options:
