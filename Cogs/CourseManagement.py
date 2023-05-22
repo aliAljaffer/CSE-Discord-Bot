@@ -328,6 +328,7 @@ class CourseManagement(commands.Cog):
     @app_commands.command(description="Add a role and have a button for it")
     @app_commands.default_permissions(administrator=True)
     async def persistrole(self, interaction:discord.Interaction, option:str):
+
         await interaction.response.send_message("Please send CSV if you intend to use one. If you do not intend to use one, the cached CSV will be used.")
         csv_filepath = f'role_lists/other_roles_{interaction.guild.id}.csv'
 
@@ -342,11 +343,21 @@ class CourseManagement(commands.Cog):
         
         roles_df = pd.read_csv(csv_filepath)
 
-        if option == "show":
-            display_msg = "roles\tbuttons\n"
+        if option == "build":
+            pass
+
+        elif option == "show":
+            embed = discord.Embed(
+                title="Micellaneous Roles and Buttons",
+            )
+            roles_msg = ""
+            buttons_msg = ""
             for i in range(len(roles_df)):
-                display_msg += f"{roles_df.loc[i, 'role_name']}\t{roles_df.loc[i, 'button_name']}\n"
-            await interaction.followup.send(display_msg)
+                roles_msg += f"{roles_df.loc[i, 'role_name']}\n"
+                buttons_msg += f"{roles_df.loc[i, 'button_name']}\n"
+            embed.add_field(name="**Roles/Links**", value=roles_msg)
+            embed.add_field(name="**Buttons**", value=buttons_msg)
+            await interaction.followup.send(embed=embed)
 
     @persistrole.autocomplete("option")
     async def persistrole_auto(self, interaction:discord.Interaction, current:str) -> List[app_commands.Choice[str]]:
