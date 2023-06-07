@@ -344,7 +344,10 @@ class CourseManagement(commands.Cog):
         roles_df = pd.read_csv(csv_filepath)
 
         if option == "build":
-            pass
+            channel = await get_channel_named(interaction.guild, "other-roles")
+            # get channel mention from user and send buttons to that channel
+            # default to #other-roles if nothing is given
+            
 
         elif option == "show":
             embed = discord.Embed(
