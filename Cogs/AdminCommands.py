@@ -139,6 +139,7 @@ class AdminCommands(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         await interaction.followup.send("Removing role")
         guild = interaction.guild
+        
 
         try:
             int(role_mention[3:-1])
