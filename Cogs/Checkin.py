@@ -164,3 +164,12 @@ class Checkin(commands.Cog):
             if current.lower() in choice.lower():
                 data.append(app_commands.Choice(name=choice, value=choice))
         return data
+
+    @app_commands.command(description="A handy menu that displays the current status of all members with the cse-devteam Role")
+    @app_commands.default_permissions(administrator=True)
+    async def checkinmenu(self, interaction:discord.Interaction):
+        """Creates an embed list with the cse-devteam members that displays
+        current work status of each member
+        """
+        role = discord.utils.get(discord.Role.name(), name='cse-devteam')
+        print(role)
