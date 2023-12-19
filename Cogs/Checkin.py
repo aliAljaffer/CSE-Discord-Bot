@@ -171,5 +171,18 @@ class Checkin(commands.Cog):
         """Creates an embed list with the cse-devteam members that displays
         current work status of each member
         """
-        role = discord.utils.get(discord.Role.name(), name='cse-devteam')
-        print(role)
+        role = discord.utils.get(interaction.guild.roles, name='cse-devteam')
+        names = [member.nick for member in role.members]
+
+        embed = discord.Embed(
+            title = "CSE Dev Team",
+            description = "List of employees and worker status",
+        )
+
+        embed.add_field(name="Workers", value="CSE Dev | Anmol\nCSE Dev | Braden\nCSE Dev | Mason")
+        embed.add_field(name="Status", value="🟢 Checked-in\n🟡 Working\n🔴 Checked-out")
+
+        # for name in names:
+        #     embed.add_field(name=name, value="🟢 Test Status")
+
+        await interaction.response.send_message(embed=embed)
